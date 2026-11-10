@@ -1,0 +1,158 @@
+1.配置
+# 设置用户名（全局，所有仓库）
+git config --global user.name "你的名字"
+# 设置邮箱（全局，和gitee/github一致）
+git config --global user.email "xxx@shturl."
+# 查看全局配置
+git config --global --list
+# 单独给当前仓库设置（不加--global）
+git config user.name "项目专用名字"
+
+2.仓库初始化 & 克隆
+# 在当前文件夹初始化为git仓库
+git init# 克隆整个仓库git clone git@xxx.git
+# 克隆【指定分支】
+git clone -b dev --single-branch git@xxx.git
+
+3.查看状态、日志
+# 查看工作区状态（最常用）
+git status
+# 查看提交日志
+git log
+# 简洁单行日志
+git log --oneline
+# 图形化分支日志
+git log --oneline --graph
+# 查看远程仓库信息
+git remote -v
+
+4.暂存区（add）、提交（commit）
+# 添加单个文件到暂存
+git add index.js
+# 添加所有修改文件
+git add .
+# 添加指定目录
+git add components/
+# 提交暂存内容，写备注
+git commit -m "feat: 新增账本弹窗"
+# 修改上一次提交备注（还没push远程时）
+git commit --amend
+
+5.分支操作（重点！多人协作高频）
+# 查看本地分支
+git branch
+# 查看本地+远程全部分支
+git branch -a
+# 只看远程分支
+git branch -r
+# 新建分支（不切换）
+git branch dev
+# 新建分支并切换过去（老写法）
+git checkout -b dev
+# 新版推荐 
+switchgit switch -c dev
+# 切换已有分支
+git checkout devgit switch dev
+# 删除本地分支
+git branch -d dev
+# 强制删除（未合并的分支）
+git branch -D dev
+# 删除远程分支
+git push origin --delete dev
+
+6.拉取、推送远程
+# 拉取远程更新（只下载，不合并，安全！推荐优先用）
+git fetch origin
+# 拉取+自动合并（fetch + merge）
+git pull origin dev
+# 推送本地分支到远程
+git push origin dev
+# 第一次推送，建立关联
+git push -u origin dev
+
+7.合并分支 merge /rebase
+# 先切到目标分支，比如切到main
+git switch main
+# 把dev分支合并到main
+git merge dev
+# rebase（整理提交记录，提交线更干净）
+git switch dev
+git rebase main
+（rebase 不要在公共分支上操作，只用于自己本地分支）
+
+8.冲突处理
+（1）出现冲突后，打开文件，手动修改 <<<<<<< HEAD 标记的冲突内容
+（2）修改完：
+git add .
+git commit -m "fix: 解决合并冲突"
+
+放弃本次合并：
+git merge --abort
+
+9.暂存修改（stash：临时保存，不想 commit 切换分支）
+# 暂存当前所有改动
+git stash
+# 带备注暂存
+git stash save "临时存一下弹窗代码"
+# 查看暂存列表
+git stash list
+# 恢复最近一次暂存（保留stash记录）
+git stash apply
+# 恢复并删除这条stash
+git stash pop
+# 删除指定stash
+git stash drop stash@{0}
+# 清空所有暂存git stash clear
+
+10.撤销、回退（高危！谨慎操作）
+# 撤销【工作区】修改（文件变回上次commit版本，未add）
+git checkout -- index.js
+# 撤销add，文件从暂存区退回工作区（不删除代码）
+git reset HEAD index.js
+git reset HEAD .
+# 版本回退（本地，已经commit）
+# --soft：回退commit，代码保留在暂存
+git reset --soft 提交id
+# --mixed（默认）：回退commit，代码回到工作区
+git reset 提交id
+# --hard：强制回退，**直接删掉改动，不可恢复！慎用**
+git reset --hard 提交id
+# 远程已经push，想强制回退远程（谨慎！团队不要随便用）
+git push origin main --force
+
+11.标签 tag（版本发布，v1.0.0）
+# 创建标签
+git tag v1.0.0
+# 给指定提交打tag
+git tag v1.0.0 提交id
+# 查看标签
+git tag
+# 推送标签到远程
+git push origin v1.0.0
+# 推送所有标签
+git push origin --tags
+# 删除本地标签
+git tag -d v1.0.0
+# 删除远程标签
+git push origin --delete v1.0.0
+
+12.cherry-pick 挑选某一条提交，复制到当前分支
+# 把指定commit复制到当前分支
+git cherry-pick 提交id
+
+13.忽略文件 .gitignore
+.gitignore里面写文件名，git 不会追踪：
+node_modules/
+dist/
+.DS_Store
+*.log
+高频简写工作流：
+# 1. 拉最新代码
+git fetch origin
+git pull origin dev
+# 2. 改代码
+# 3. 提交
+git add .
+git commit -m "feat: 新增选择账本页面"
+# 4. 推送到远程
+git push origin dev
