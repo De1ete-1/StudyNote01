@@ -61,6 +61,8 @@ git branch -D dev
 git push origin --delete dev
 
 6.拉取、推送远程
+#连接仓库地址
+git remote add origin 仓库地址
 # 拉取远程更新（只下载，不合并，安全！推荐优先用）
 git fetch origin
 # 拉取+自动合并（fetch + merge）
